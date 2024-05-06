@@ -4,42 +4,15 @@ import Header from "./components/header";
 import Addtask from "./components/addTask";
 import React from "react";
 //import EditTask from "./components/editForm";
-let arr = JSON.parse(localStorage.getItem("todo"));
-
+//let arr = JSON.parse(localStorage.getItem("todo"));
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       start: true,
 
-      tasks: [
-        {
-          id: 0 + 0.01 * Math.random(),
-          taskName: "First task",
-          taskDescription:
-            "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Omnis, voluptatum? Modi laudantium eligendi sed soluta.",
-        },
-        {
-          id: 1 + 0.01 * Math.random(),
-          taskName: "second task",
-          taskDescription:
-            "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Omnis, voluptatum? Modi laudantium eligendi sed soluta.",
-        },
-      ],
-      compliteTAskList: [
-        {
-          id: 0 + 0.01 * Math.random(),
-          taskName: "1First task",
-          taskDescription:
-            "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Omnis, voluptatum? Modi laudantium eligendi sed soluta.",
-        },
-        {
-          id: 1 + 0.01 * Math.random(),
-          taskName: "2second task",
-          taskDescription:
-            "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Omnis, voluptatum? Modi laudantium eligendi sed soluta.",
-        },
-      ],
+      tasks: JSON.parse(localStorage.getItem("todo")) || [],
+      compliteTAskList: JSON.parse(localStorage.getItem("todoComplite")) || [],
     };
 
     this.renderTasksList = this.renderTasksList.bind(this);
@@ -47,6 +20,7 @@ class App extends React.Component {
     this.deleteTask = this.deleteTask.bind(this);
     this.compliteTask = this.compliteTask.bind(this);
     this.editTask = this.editTask.bind(this);
+    this.saveLocalStorage = this.saveLocalStorage.bind(this);
   }
 
   render() {
@@ -77,10 +51,7 @@ class App extends React.Component {
     this.setState({ tasks: [] }, () => {
       this.setState({ tasks: [...newArr] });
     });
-    console.log(task.id);
-    console.log(task.taskName);
-    console.log(task.taskDescription);
-    console.log(task.className);
+    setTimeout(() => this.saveLocalStorage(), 100);
   }
   renderTasksList(id) {
     id === "active"
@@ -97,6 +68,7 @@ class App extends React.Component {
     });
     task.className = "complete";
     setTimeout(() => this.deleteTask(task.id), 2000);
+    setTimeout(() => this.saveLocalStorage(), 100);
   }
 
   deleteTask(id) {
@@ -109,24 +81,19 @@ class App extends React.Component {
         ),
       });
     }
+    setTimeout(() => this.saveLocalStorage(), 100);
+  }
+  newTask(task) {
+    let id = this.state.tasks.length + 0.01 * Math.random();
+    this.setState({ tasks: [...this.state.tasks, { id, ...task }] });
+    setTimeout(() => this.saveLocalStorage(), 100);
+  }
+  saveLocalStorage() {
     localStorage.setItem("todo", JSON.stringify(this.state.tasks));
     localStorage.setItem(
       "todoComplite",
       JSON.stringify(this.state.compliteTAskList)
     );
-  }
-  newTask(task) {
-    let id = this.state.tasks.length + 0.01 * Math.random();
-    this.setState({ tasks: [...this.state.tasks, { id, ...task }] });
-    localStorage.setItem(
-      "todo",
-      JSON.stringify([{ ...this.state.tasks }, { ...task }])
-    );
-    localStorage.setItem(
-      "todoComplite",
-      JSON.stringify(this.state.compliteTAskList)
-    );
-    //console.log(localStorage.getItem("todo"));
   }
 }
 
